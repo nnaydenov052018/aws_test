@@ -214,7 +214,7 @@ ec2 = AwsEc2(aws_creds['access_key_id'], aws_creds['secret_access_key'], aws_cre
 
 
 ## Terminate instances
-# terminate = ec2.terminate_ec2_instances(['i-02e86685c99fbf302'])
+# terminate = ec2.terminate_ec2_instances(['i-0613374c54e311b0d'])
 # print(terminate)
 
 ## Create instances
@@ -246,37 +246,37 @@ ec2 = AwsEc2(aws_creds['access_key_id'], aws_creds['secret_access_key'], aws_cre
 # print(response)
 
 ## Exec commands on EC2
-install_docker_cmd = """
-#!/bin/bash
+# install_docker_cmd = """
+# #!/bin/bash
 
-sudo rm -f /etc/yum.repos.d/docker-ce.repo
+# sudo rm -f /etc/yum.repos.d/docker-ce.repo
 
-echo "* Install Prerequisites ..."
-sudo yum update -y
+# echo "* Install Prerequisites ..."
+# sudo yum update -y
 
-echo "* Install Docker ..."
-sudo yum makecache fast
-sudo amazon-linux-extras install docker
+# echo "* Install Docker ..."
+# sudo yum makecache fast
+# sudo amazon-linux-extras install docker
 
-echo "* Start Docker ..."
-sudo systemctl enable docker
-sudo systemctl start docker
+# echo "* Start Docker ..."
+# sudo systemctl enable docker
+# sudo systemctl start docker
 
-# Add ec2-user into docker group
-sudo usermod -a -G docker ec2-user
+# # Add ec2-user into docker group
+# sudo usermod -a -G docker ec2-user
 
-# Verify docker installation
-sudo docker info
-"""
+# # Verify docker installation
+# sudo docker info
+# """
 
-test_cmd = """
-#!/bin/bash
-docker info
-"""
-ec2.ec2_exec_shell(instance_ip='3.127.249.73', 
-                   ec2_user='ec2-user', 
-                   ssh_private_key='C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.ssh\\devops-ssh.pem', 
-                   cmd=install_docker_cmd)
+# test_cmd = """
+# #!/bin/bash
+# docker info
+# """
+# ec2.ec2_exec_shell(instance_ip='3.127.249.73', 
+#                    ec2_user='ec2-user', 
+#                    ssh_private_key='C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.ssh\\devops-ssh.pem', 
+#                    cmd=install_docker_cmd)
 
 ## Describe Security Groups
 # response = ec2.describe_ec2_security_groups(security_group_ids=['sg-00c199835cdf74767'])
