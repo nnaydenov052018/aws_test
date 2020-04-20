@@ -18,14 +18,15 @@ class AwsEc2(object):
                                         region_name=self.aws_region)
 
 
-    def create_ec2_instance(self, image_id=None, instance_type=None, keypair_name=None, mincount=None, maxcount=None):
+    def create_ec2_instance(self, image_id=None, instance_type=None, keypair_name=None, mincount=None, maxcount=None, UserData=None):
         # Provision and launch the EC2 instance
         try:
             response = self.ec2_client.run_instances(ImageId=image_id,
                                                 InstanceType=instance_type,
                                                 KeyName=keypair_name,
                                                 MinCount=mincount,
-                                                MaxCount=maxcount)
+                                                MaxCount=maxcount,
+                                                UserData=UserData)
 
         except ClientError as e:
             logging.error(e)
@@ -200,7 +201,8 @@ class AwsEc2(object):
 
 
 ## Create class instance
-with open('.config\\.config.json') as f:
+aws_config = 'C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.config\\.config.json'
+with open(aws_config, 'r') as f:
   aws_creds = json.load(f)
 
 ec2 = AwsEc2(aws_creds['access_key_id'], aws_creds['secret_access_key'], aws_creds['aws_region'])
@@ -209,18 +211,23 @@ ec2 = AwsEc2(aws_creds['access_key_id'], aws_creds['secret_access_key'], aws_cre
 ## Describe instances
 # response = ec2.describe_ec2_instances()
 # print(response)
-##### print(json.dumps(response, default=bson.json_util.default))
+
 
 ## Terminate instances
-terminate = ec2.terminate_ec2_instances(['i-057a5f2ea421a972e'])
-print(terminate)
+# terminate = ec2.terminate_ec2_instances(['i-02e86685c99fbf302'])
+# print(terminate)
 
 ## Create instances
+# UserDataString = """
+# #!/bin/bash
+# echo "Run UserData Nikola Naydenov" > /tmp/userdatatest.txt
+# """
 # instance_info = ec2.create_ec2_instance(image_id='ami-076431be05aaf8080', 
 #                                         instance_type='t2.micro', 
 #                                         keypair_name='devops-ssh', 
 #                                         mincount=1, 
-#                                         maxcount=1)
+#                                         maxcount=1,
+#                                         UserData=UserDataString)
 # if instance_info is not None:
 #     print(f'Launched EC2 Instance {instance_info["InstanceId"]}')
 #     print(f'    VPC ID: {instance_info["VpcId"]}')
@@ -239,10 +246,37 @@ print(terminate)
 # print(response)
 
 ## Exec commands on EC2
-# ec2.ec2_exec_shell(instance_ip='35.159.50.26', 
-#                    ec2_user='ec2-user', 
-#                    ssh_private_key='C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.ssh\\devops-ssh.pem', 
-#                    cmd='uptime')
+install_docker_cmd = """
+#!/bin/bash
+
+sudo rm -f /etc/yum.repos.d/docker-ce.repo
+
+echo "* Install Prerequisites ..."
+sudo yum update -y
+
+echo "* Install Docker ..."
+sudo yum makecache fast
+sudo amazon-linux-extras install docker
+
+echo "* Start Docker ..."
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Add ec2-user into docker group
+sudo usermod -a -G docker ec2-user
+
+# Verify docker installation
+sudo docker info
+"""
+
+test_cmd = """
+#!/bin/bash
+docker info
+"""
+ec2.ec2_exec_shell(instance_ip='3.127.249.73', 
+                   ec2_user='ec2-user', 
+                   ssh_private_key='C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.ssh\\devops-ssh.pem', 
+                   cmd=install_docker_cmd)
 
 ## Describe Security Groups
 # response = ec2.describe_ec2_security_groups(security_group_ids=['sg-00c199835cdf74767'])
@@ -255,5 +289,5 @@ print(terminate)
 #ec2.delete_ec2_security_group(security_group_id='sg-072ddaea375d72f83')
 
 ## Assigne Security group to EC2 instance
-# ec2.change_ec2_security_groups(instance_id='i-057a5f2ea421a972e', security_group_ids=['sg-0f48fe01ddddc21f7'])
+# ec2.change_ec2_security_groups(instance_id='i-02e86685c99fbf302', security_group_ids=['sg-0f48fe01ddddc21f7'])
 
