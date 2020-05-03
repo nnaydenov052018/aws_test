@@ -9,7 +9,7 @@ from utils.ec2_utils import AwsEc2
 
 def main(aws_config, describe_ec2, create_ec2, image_id, instance_type,
          keypair_name, min_count, max_count, user_data, terminate_ec2,
-         action, ec2_id):
+         action, ec2_ids):
 
     with open(aws_config, 'r') as f:
         aws_creds = json.load(f)
@@ -45,8 +45,8 @@ def main(aws_config, describe_ec2, create_ec2, image_id, instance_type,
         terminate = ec2.terminate_ec2_instances(ec2_to_terminate)
         print(terminate)
     
-    if action and ec2_id:
-        ec2_to_manage = ec2_id.split(',')
+    if action and ec2_ids:
+        ec2_to_manage = ec2_ids.split(',')
         ec2.start_stop_reboot_ec2_instances(ec2_to_manage, action)
 
 if __name__ == '__main__':
@@ -68,27 +68,27 @@ if __name__ == '__main__':
     
     parser.add_argument('--action', required=False, 
                         help="Start/Stop/Reboot EC2. Valid actions: ON|OFF|REBOOT|RESTART")
-    parser.add_argument('--ec2_id', required=False, help='EC2 instance ids to be managed ,comma delimited')
+    parser.add_argument('--ec2_ids', required=False, help='EC2 instance ids to be managed ,comma delimited')
 
     args = parser.parse_args()
 
     warn_message = "--create_ec2 requires: --image_id --instance_type --keypair_name --min_count --max_count --user_data" 
     if args.create_ec2 and not args.image_id:
-        raise Exception(f"'--image_id' not provided and dependent to '--create_ec2'. {warn_message}")
+        raise AttributeError(f"'--image_id' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.instance_type:
-        raise Exception(f"'--instance_type' not provided and dependent to '--create_ec2'. {warn_message}")
+        raise AttributeError(f"'--instance_type' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.keypair_name:
-        raise Exception(f"'--keypair_name' not provided and dependent to '--create_ec2'. {warn_message}")
+        raise AttributeError(f"'--keypair_name' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.min_count:
-        raise Exception(f"'--min_count' not provided and dependent to '--create_ec2'. {warn_message}")
+        raise AttributeError(f"'--min_count' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.max_count:
-        raise Exception(f"'--max_count' not provided and dependent to '--create_ec2'. {warn_message}")
+        raise AttributeError(f"'--max_count' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.user_data:
-        raise Exception(f"'--user_data' not provided and dependent to '--create_ec2'. {warn_message}")
+        raise AttributeError(f"'--user_data' not provided and dependent to '--create_ec2'. {warn_message}")
     
-    if args.action and not args.ec2_id:
-        raise Exception("'--ec2_id' not provided and dependent to '--action'. --action requires --ec2_id")
+    if args.action and not args.ec2_ids:
+        raise AttributeError("'--ec2_ids' not provided and dependent to '--action'. --action requires --ec2_ids")
 
     main(args.aws_config, args.describe_ec2, args.create_ec2, args.image_id, args.instance_type, 
          args.keypair_name, args.min_count, args.max_count, args.user_data, args.terminate_ec2,
-         args.action, args.ec2_id)
+         args.action, args.ec2_ids)

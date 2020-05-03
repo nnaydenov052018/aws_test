@@ -30,7 +30,7 @@ def main(aws_config, describe_sg, create_sg,
 
     if create_sg:
        ingress_ports = sg_ingress_ports.split(',')
-       ec2.create_ec2_security_group(security_group_name=sg_name, ingress_port=ingress_ports)
+       ec2.create_ec2_security_group(security_group_name=sg_name, ingress_port=[int(i) for i in ingress_ports])
 
     if delete_sg:
         sg_to_del = delete_sg.split(',')
@@ -64,12 +64,12 @@ if __name__ == '__main__':
 
     warn_message = "--create_sg requires: --sg_name --sg_ingress_ports" 
     if args.create_sg and not args.sg_name:
-        raise Exception(f"'--sg_name' not provided and dependent to '--create_sg'. {warn_message}")
+        raise AttributeError(f"'--sg_name' not provided and dependent to '--create_sg'. {warn_message}")
     elif args.create_sg and not args.sg_ingress_ports:
-        raise Exception(f"'--sg_ingress_ports' not provided and dependent to '--create_sg'. {warn_message}")
+        raise AttributeError(f"'--sg_ingress_ports' not provided and dependent to '--create_sg'. {warn_message}")
     
-    if args.sg_to_attach_to_ec2 and not args.ec2_id:
-        raise Exception("'--ec2_ids' not provided and dependent to '--sg_to_attach_to_ec2'. --sg_to_attach_to_ec2 requires --ec2_ids")
+    if args.sg_to_attach_to_ec2 and not args.ec2_ids:
+        raise AttributeError("'--ec2_ids' not provided and dependent to '--sg_to_attach_to_ec2'. --sg_to_attach_to_ec2 requires --ec2_ids")
 
     main(args.aws_config, args.describe_sg, args.create_sg, args.sg_name, args.sg_ingress_ports, 
          args.delete_sg, args.sg_to_attach_to_ec2, args.ec2_ids)
