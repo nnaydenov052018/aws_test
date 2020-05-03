@@ -201,7 +201,7 @@ class AwsEc2(object):
 
 
 ## Create class instance
-aws_config = 'C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.config\\.config.json'
+aws_config = 'C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.config\\.aws_config.json'
 with open(aws_config, 'r') as f:
   aws_creds = json.load(f)
 
