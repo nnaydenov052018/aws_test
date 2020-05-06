@@ -35,10 +35,11 @@ if __name__ == '__main__':
     parser.add_argument('--aws_config', required=False, 
                         default='C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.config\\.aws_config.json', 
                         help='AWS credentials config file path')
-    
+    # Describe SSH keypairs
     parser.add_argument('--describe_ssh_keypair', action='store_true', 
                         help="Described SSH key pairs")
     
+    # Create/Delete SSH keypairs
     parser.add_argument('--create_ssh_keypair', action='store_true', help='create SSH key pairs')   
     parser.add_argument('--delete_ssh_keypair', action='store_true', help='delete SSH key pairs')
     parser.add_argument('--ssh_keypair_name', required=False, help='SSH key pair name to be created/deleted')

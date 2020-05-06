@@ -47,15 +47,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--aws_config', required=False, default='C:\\Users\\Nikola Naydenov\\Desktop\\AWS\\.config\\.aws_config.json', 
                         help='AWS credentials config file path')
-    
+    # Describe Security Groups
     parser.add_argument('--describe_sg', required=False, help="SG ids to be described ,comma delimited. To describe all available SGs use '*' ")
     
+    # Create Security Groups
     parser.add_argument('--create_sg', action='store_true', help='create SG')
     parser.add_argument('--sg_name', required=False, help='SG name')
     parser.add_argument('--sg_ingress_ports', required=False, help='SG ingress ports ,comma delimited')
     
+    # Delete Security Groups
     parser.add_argument('--delete_sg', required=False, help='SG ids to be deleted ,comma delimited')
     
+    # Attach Security Groups to EC2
     parser.add_argument('--sg_to_attach_to_ec2', required=False, 
                         help="Attach SG to EC2 instance. SG ids ,comma delimited")
     parser.add_argument('--ec2_ids', required=False, help='EC2 instance ids to be attach SGs ,comma delimited')
