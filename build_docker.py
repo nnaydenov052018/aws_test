@@ -1,9 +1,12 @@
 import sys
 import os
-import json
+import json, yaml
 import argparse
 
 docker_image_name = 'nnaydenovdocker/gmail-cli-tool'
+
+def get_root_path():
+    return os.path.dirname(os.path.abspath(__file__))
 
 def execute_shell(cmd):
     try:
@@ -15,11 +18,24 @@ def execute_shell(cmd):
 
 def get_version():
     try:
-        with open('VERSION', 'r') as vf:
+        with open(os.path.join(get_root_path(), 'VERSION'), 'r') as vf:
             version = vf.read().strip()
         
         return version
 
+    except Exception as e:
+        raise(f'Error, {e}')
+
+def generate_docker_compose(version):
+    try:
+        with open(os.path.join(get_root_path(), 'docker-compose', 'docker-compose.yml_tpl'), 'r') as f:
+            docker_compose_dt = yaml.load(f, Loader=yaml.FullLoader)
+        
+        docker_compose_dt['services']['gmail-cli']['image'] = f"{docker_image_name}:{version}"
+
+        with open(os.path.join(get_root_path(), 'docker-compose', 'docker-compose.yml'), 'w') as f:
+            yaml.dump(docker_compose_dt, f, default_flow_style=False, sort_keys=False)
+    
     except Exception as e:
         raise(f'Error, {e}')
 
@@ -49,6 +65,9 @@ def main(config_file):
 
     print(f"\n ========== Logout docker registry ========== \n")
     execute_shell(f"docker logout")
+
+    print(f"\n ========== Generate docker-compose.yml ========== \n")
+    generate_docker_compose(docker_image_version)
 
 
 if __name__ == '__main__':

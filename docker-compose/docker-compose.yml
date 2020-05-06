@@ -1,0 +1,9 @@
+version: '2.0'
+services:
+  gmail-cli:
+    image: nnaydenovdocker/gmail-cli-tool:0.0.2
+    volumes:
+    - /home/ec2-user/Gmail_Tool:/root/Gmail_Tool
+    - /home/ec2-user/mailbox:/root/mailbox
+    restart: on-failure
+    command: bash -c 'while true; do sleep 2; done'
