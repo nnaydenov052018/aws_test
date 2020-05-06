@@ -24,8 +24,12 @@ def main(aws_config, describe_ec2, create_ec2, image_id, instance_type,
         print(json.dumps(response, default = ec2.date_time_converter ,indent=4))
 
     if create_ec2:
-        with open(user_data, 'r') as f:
-            UserDataString = f.read()
+        if user_data:
+            with open(user_data, 'r') as f:
+                UserDataString = f.read()
+        
+        else:
+            UserDataString = """#!/bin/bash"""
         
         instance_info = ec2.create_ec2_instance(image_id = image_id, 
                                                 instance_type = instance_type, 
@@ -80,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument('--ssh_keypair_name', required=False, default='devops-ssh', help='ssh key pair to be used by EC2')
     parser.add_argument('--min_count', required=False, default=1, help='Min count of EC2 instances to be provisioned')
     parser.add_argument('--max_count', required=False, default=1, help='Max count of EC2 instances to be provisioned')
-    parser.add_argument('--user_data', required=False, default='.\\EC2\\UserData\\install_docker.sh', help='Path to User Data script')
+    parser.add_argument('--user_data', required=False, help='Path to User Data script')
 
     # Terminate EC2
     parser.add_argument('--terminate_ec2', required=False, help='EC2 instance ids to be terminated ,comma delimited')
@@ -112,8 +116,6 @@ if __name__ == '__main__':
         raise AttributeError(f"'--min_count' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.max_count:
         raise AttributeError(f"'--max_count' not provided and dependent to '--create_ec2'. {warn_message}")
-    elif args.create_ec2 and not args.user_data:
-        raise AttributeError(f"'--user_data' not provided and dependent to '--create_ec2'. {warn_message}")
     
     if args.action and not args.ec2_ids:
         raise AttributeError("'--ec2_ids' not provided and dependent to '--action'. --action requires --ec2_ids")
