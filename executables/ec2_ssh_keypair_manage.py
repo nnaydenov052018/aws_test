@@ -7,9 +7,7 @@ import datetime
 from utils.ec2_utils import AwsEc2
 
 
-def main(aws_config, describe_ssh_keypair, 
-         create_ssh_keypair, delete_ssh_keypair, 
-         ssh_keypair_name)
+def main(aws_config, describe_ssh_keypair, create_ssh_keypair, delete_ssh_keypair, ssh_keypair_name):
 
     with open(aws_config, 'r') as f:
         aws_creds = json.load(f)
@@ -52,6 +50,4 @@ if __name__ == '__main__':
     elif args.delete_ssh_keypair and not args.ssh_keypair_name:
         raise AttributeError(f"'--ssh_keypair_name' not provided and dependent to '--delete_ssh_keypair'.")
     
-    main(args.aws_config, args.describe_ssh_keypair, 
-         args.create_ssh_keypair, args.delete_ssh_keypair, 
-         args.ssh_keypair_name)
+    main(args.aws_config, args.describe_ssh_keypair, args.create_ssh_keypair, args.delete_ssh_keypair, args.ssh_keypair_name)
