@@ -8,7 +8,7 @@ from utils.ec2_utils import AwsEc2
 
 
 def main(aws_config, describe_ec2, create_ec2, image_id, instance_type,
-         keypair_name, min_count, max_count, user_data, terminate_ec2,
+         ssh_keypair_name, min_count, max_count, user_data, terminate_ec2,
          action, ec2_ids):
 
     with open(aws_config, 'r') as f:
@@ -29,7 +29,7 @@ def main(aws_config, describe_ec2, create_ec2, image_id, instance_type,
         
         instance_info = ec2.create_ec2_instance(image_id = image_id, 
                                                 instance_type = instance_type, 
-                                                keypair_name = keypair_name, 
+                                                keypair_name = ssh_keypair_name, 
                                                 mincount = min_count, 
                                                 maxcount = max_count, 
                                                 UserData = UserDataString)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('--create_ec2', action='store_true', help='create EC2 instance')
     parser.add_argument('--image_id', required=False, default='ami-076431be05aaf8080', help='EC2 image id')
     parser.add_argument('--instance_type', required=False, default='t2.micro', help='EC2 instance type')
-    parser.add_argument('--keypair_name', required=False, default='devops-ssh', help='ssh key pair to be used by EC2')
+    parser.add_argument('--ssh_keypair_name', required=False, default='devops-ssh', help='ssh key pair to be used by EC2')
     parser.add_argument('--min_count', required=False, default=1, help='Min count of EC2 instances to be provisioned')
     parser.add_argument('--max_count', required=False, default=1, help='Max count of EC2 instances to be provisioned')
     parser.add_argument('--user_data', required=False, default='.\\EC2\\UserData\\install_docker.sh', help='Path to User Data script')
@@ -72,13 +72,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    warn_message = "--create_ec2 requires: --image_id --instance_type --keypair_name --min_count --max_count --user_data" 
+    warn_message = "--create_ec2 requires: --image_id --instance_type --ssh_keypair_name --min_count --max_count --user_data" 
     if args.create_ec2 and not args.image_id:
         raise AttributeError(f"'--image_id' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.instance_type:
         raise AttributeError(f"'--instance_type' not provided and dependent to '--create_ec2'. {warn_message}")
-    elif args.create_ec2 and not args.keypair_name:
-        raise AttributeError(f"'--keypair_name' not provided and dependent to '--create_ec2'. {warn_message}")
+    elif args.create_ec2 and not args.ssh_keypair_name:
+        raise AttributeError(f"'--ssh_keypair_name' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.min_count:
         raise AttributeError(f"'--min_count' not provided and dependent to '--create_ec2'. {warn_message}")
     elif args.create_ec2 and not args.max_count:
@@ -90,5 +90,5 @@ if __name__ == '__main__':
         raise AttributeError("'--ec2_ids' not provided and dependent to '--action'. --action requires --ec2_ids")
 
     main(args.aws_config, args.describe_ec2, args.create_ec2, args.image_id, args.instance_type, 
-         args.keypair_name, args.min_count, args.max_count, args.user_data, args.terminate_ec2,
+         args.ssh_keypair_name, args.min_count, args.max_count, args.user_data, args.terminate_ec2,
          args.action, args.ec2_ids)
