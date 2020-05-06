@@ -1,34 +1,34 @@
 #!/bin/bash
 
 ## Upgrade system
-sudo yum upgrade -y
+yum upgrade -y
 
 ## Installing docker
-sudo rm -f /etc/yum.repos.d/docker-ce.repo
+rm -f /etc/yum.repos.d/docker-ce.repo
 
 echo "* Install Prerequisites ..."
-sudo yum update -y
+yum update -y
 
 echo "* Install Docker ..."
-sudo yum makecache fast
-sudo amazon-linux-extras install docker
+yum makecache fast
+amazon-linux-extras install docker
 
 echo "* Start Docker ..."
-sudo systemctl enable docker
-sudo systemctl start docker
+systemctl enable docker
+systemctl start docker
 
 # Add ec2-user into docker group
-sudo usermod -a -G docker ec2-user
+usermod -a -G docker ec2-user
 
 # Verify docker
-sudo docker info
+docker info
 
 ## Install git client and  python-pip
-sudo yum install git -y
-sudo yum install python3 -y
+yum install git -y
+yum install python3 -y
 
 ## Install docker-compose
-sudo pip3 install docker-compose
+pip3 install docker-compose
 
 ## Create gmail-cli tool directories
 mkdir -p ~/Gmail_Tool && chmod 700 ~/Gmail_Tool -R
